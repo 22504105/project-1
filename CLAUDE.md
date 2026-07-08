@@ -29,7 +29,12 @@
 - Solution Visual Studio (`project-1.slnx`, новый формат `.slnx`).
 - Remote: https://github.com/22504105/project-1
 - Основная ветка: `main`.
-- Стартовый проект: `.NET 8` console app в `src/App` (`App.csproj`).
+- **Направление продукта**: ExamPlanner — приложение для студентов (темы к экзаменам,
+  прогресс, планирование времени). Дизайн MVP и роадмап отложенных фич (сервер/аккаунты,
+  iOS, уведомления, тесты-квизы, ИИ и т.д.) — в `docs/superpowers/specs/`. **Напоминание:**
+  отложенное не забываем — оно перечислено в разделе «Дальнейшие фазы» спеки.
+- Стартовый проект: `.NET 8` console app в `src/App` (`App.csproj`) — заготовка;
+  MVP будет отдельным проектом .NET MAUI (Android).
 - Сборка из CLI: `dotnet build src/App/App.csproj`. Формат `.slnx` из CLI требует
   SDK ≥ 9.0.200 (сейчас установлен 8.0.422 → `dotnet build project-1.slnx` не работает);
   в Visual Studio 2026 `.slnx` собирается штатно.
