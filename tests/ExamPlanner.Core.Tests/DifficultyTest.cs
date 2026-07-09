@@ -59,4 +59,45 @@ public class DifficultyTest
         Assert.Equal(1, pace.RemainingTopics);
         Assert.Equal(9d, pace.NeedMinutesPerDay);
     }
+
+    [Fact]
+    public void BuildDailyPlan_Uses_DifficultyWeighted_Minutes()
+    {
+        // daysLeft = 2 Jun - 1 Jun = 1 -> quota = ceil(2/1) = 2. Easy 15 + Hard 45 = 60 <= 60 available.
+        var exam = new Exam { Id = 1, Name = "M", Date = new DateTime(2026, 6, 2), MinutesPerTopic = 30 };
+        var topics = new List<Topic>
+        {
+            new Topic { Id = 1, ExamId = 1, Position = 0, Title = "E", Difficulty = TopicDifficulty.Easy },
+            new Topic { Id = 2, ExamId = 1, Position = 1, Title = "H", Difficulty = TopicDifficulty.Hard },
+        };
+        var data = new List<(Exam, IReadOnlyList<Topic>)> { (exam, topics) };
+
+        var plan = _svc.BuildDailyPlan(data, availableHoursPerDay: 1, Today); // 60 min
+
+        Assert.Equal(2, plan.Items.Count);
+        Assert.Equal(15, plan.Items[0].Minutes);
+        Assert.Equal(45, plan.Items[1].Minutes);
+        Assert.Equal(60d, plan.UsedMinutes);
+        Assert.Empty(plan.NotFittedExamIds);
+    }
+
+    [Fact]
+    public void BuildDailyPlan_Flags_NotFitted_When_Hard_Topic_Too_Big()
+    {
+        // available 30 min. quota = 2. Easy 15 fits (used 15); Hard 45 -> 15+45=60 > 30 -> break. placed 1 < 2 -> not fitted.
+        var exam = new Exam { Id = 1, Name = "M", Date = new DateTime(2026, 6, 2), MinutesPerTopic = 30 };
+        var topics = new List<Topic>
+        {
+            new Topic { Id = 1, ExamId = 1, Position = 0, Title = "E", Difficulty = TopicDifficulty.Easy },
+            new Topic { Id = 2, ExamId = 1, Position = 1, Title = "H", Difficulty = TopicDifficulty.Hard },
+        };
+        var data = new List<(Exam, IReadOnlyList<Topic>)> { (exam, topics) };
+
+        var plan = _svc.BuildDailyPlan(data, availableHoursPerDay: 0.5, Today); // 30 min
+
+        Assert.Single(plan.Items);
+        Assert.Equal(15, plan.Items[0].Minutes);
+        Assert.Equal(15d, plan.UsedMinutes);
+        Assert.Contains(1, plan.NotFittedExamIds);
+    }
 }

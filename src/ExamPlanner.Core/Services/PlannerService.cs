@@ -73,10 +73,11 @@ public class PlannerService
             var placed = 0;
             foreach (var topic in remaining.Take(quota))
             {
-                if (used + exam.MinutesPerTopic <= available)
+                var minutes = EffectiveMinutes(topic, exam);
+                if (used + minutes <= available)
                 {
-                    items.Add(new PlanItem(exam.Id, exam.Name, topic.Id, topic.Title, exam.MinutesPerTopic));
-                    used += exam.MinutesPerTopic;
+                    items.Add(new PlanItem(exam.Id, exam.Name, topic.Id, topic.Title, minutes));
+                    used += minutes;
                     placed++;
                 }
                 else break;
