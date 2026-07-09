@@ -201,11 +201,14 @@ public sealed class StudyTreeView : GraphicsView
 				float ar = Math.Max(5f, canopyR * 0.14f);
 				for (int i = 0; i < apples; i++)
 				{
-					// deterministic pseudo-random scatter across the canopy
-					float ang = Frac(MathF.Sin(i * 12.9898f + 0.7f) * 43758.547f) * MathF.PI * 2f;
-					float rad = 0.18f + Frac(MathF.Sin(i * 78.233f + 3.1f) * 24634.633f) * 0.55f;
-					float ax = cx + MathF.Cos(ang) * rad * canopyR;
-					float ay = cy - canopyR * 0.06f + MathF.Sin(ang) * rad * canopyR * 0.80f;
+					// even coverage across the whole canopy (Vogel/golden-angle spiral)
+					// plus deterministic jitter so it still looks chaotic.
+					float t = (i + 0.5f) / apples;
+					float rr = MathF.Sqrt(t) + (Frac(MathF.Sin(i * 91.7f + 2.1f) * 47251.3f) - 0.5f) * 0.22f;
+					rr = Math.Clamp(rr, 0.05f, 0.92f);
+					float ang = i * 2.399963f + (Frac(MathF.Sin(i * 53.3f + 5.7f) * 19733.7f) - 0.5f) * 1.1f;
+					float ax = cx + MathF.Cos(ang) * rr * canopyR * 1.05f;
+					float ay = cy - canopyR * 0.05f + MathF.Sin(ang) * rr * canopyR * 0.85f;
 					DrawApple(canvas, ax, ay, ar, appleColor, appleHi, trunkColor, leafColor);
 				}
 			}
