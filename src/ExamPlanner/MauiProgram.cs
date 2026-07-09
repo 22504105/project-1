@@ -26,6 +26,9 @@ public static class MauiProgram
 		builder.Services.AddTransient<DashboardPage>();
 		builder.Services.AddTransient<DashboardViewModel>();
 
+		builder.Services.AddTransient<EditExamPage>();
+		builder.Services.AddTransient<EditExamViewModel>();
+
 #if DEBUG
 		builder.Logging.AddDebug();
 #endif
