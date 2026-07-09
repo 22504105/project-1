@@ -34,4 +34,41 @@ public class PlannerService
         var available = availableHoursPerDay * 60;
         return new DashboardSummary(paces, recommended, available, recommended > available);
     }
+
+    public DailyPlan BuildDailyPlan(
+        IReadOnlyList<(Exam exam, IReadOnlyList<Topic> topics)> data,
+        double availableHoursPerDay,
+        DateTime today)
+    {
+        var available = availableHoursPerDay * 60;
+        var items = new List<PlanItem>();
+        var notFitted = new List<int>();
+        double used = 0;
+
+        var ordered = data.OrderBy(d => d.exam.Date).ToList();
+        foreach (var (exam, topics) in ordered)
+        {
+            var remaining = topics.Where(t => t.Status != TopicStatus.Done)
+                                   .OrderBy(t => t.Position)
+                                   .ToList();
+            var quota = TodayQuota(remaining.Count, DaysLeft(exam.Date, today));
+            if (quota == 0) continue;
+
+            var placed = 0;
+            foreach (var topic in remaining.Take(quota))
+            {
+                if (used + exam.MinutesPerTopic <= available)
+                {
+                    items.Add(new PlanItem(exam.Id, exam.Name, topic.Id, topic.Title, exam.MinutesPerTopic));
+                    used += exam.MinutesPerTopic;
+                    placed++;
+                }
+                else break;
+            }
+
+            if (placed < quota) notFitted.Add(exam.Id);
+        }
+
+        return new DailyPlan(items, used, available, notFitted);
+    }
 }
