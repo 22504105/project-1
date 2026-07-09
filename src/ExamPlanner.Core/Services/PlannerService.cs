@@ -28,9 +28,12 @@ public class PlannerService
     public ExamPace BuildPace(Exam exam, IReadOnlyList<Topic> topics, DateTime today)
     {
         var total = topics.Count;
-        var remaining = topics.Count(t => t.Status != TopicStatus.Done);
+        var remainingTopics = topics.Where(t => t.Status != TopicStatus.Done).ToList();
+        var remaining = remainingTopics.Count;
         var daysLeft = DaysLeft(exam.Date, today);
-        var need = remaining == 0 ? 0d : (double)remaining * exam.MinutesPerTopic / daysLeft;
+        var need = remaining == 0
+            ? 0d
+            : (double)remainingTopics.Sum(t => EffectiveMinutes(t, exam)) / daysLeft;
         var quota = TodayQuota(remaining, daysLeft);
         var urgent = remaining > 0 && daysLeft <= UrgentDaysThreshold;
 
