@@ -23,4 +23,15 @@ public class PlannerService
 
         return new ExamPace(exam.Id, exam.Name, exam.Date, total, remaining, daysLeft, need, quota, urgent);
     }
+
+    public DashboardSummary BuildDashboard(
+        IReadOnlyList<(Exam exam, IReadOnlyList<Topic> topics)> data,
+        double availableHoursPerDay,
+        DateTime today)
+    {
+        var paces = data.Select(d => BuildPace(d.exam, d.topics, today)).ToList();
+        var recommended = paces.Where(p => p.RemainingTopics > 0).Sum(p => p.NeedMinutesPerDay);
+        var available = availableHoursPerDay * 60;
+        return new DashboardSummary(paces, recommended, available, recommended > available);
+    }
 }
