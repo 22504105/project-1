@@ -73,4 +73,32 @@ public class RepositoryTest : IDisposable
         Assert.Equal(6, loaded.SunHours);
         Assert.Null(loaded.MonHours);
     }
+
+    [Fact]
+    public async Task SaveSession_RoundTrips_And_GetByExam()
+    {
+        var examId = await _repo.SaveExamAsync(new Exam { Name = "Matan" });
+        await _repo.SaveSessionAsync(new StudySession
+        {
+            ExamId = examId, TopicId = 7, Minutes = 45, StartedAt = new DateTime(2026, 6, 1, 10, 0, 0)
+        });
+
+        var sessions = await _repo.GetSessionsAsync(examId);
+        Assert.Single(sessions);
+        Assert.Equal(45, sessions[0].Minutes);
+        Assert.Equal(7, sessions[0].TopicId);
+        Assert.Single(await _repo.GetAllSessionsAsync());
+    }
+
+    [Fact]
+    public async Task DeleteExam_Also_Deletes_Its_Sessions()
+    {
+        var examId = await _repo.SaveExamAsync(new Exam { Name = "Physics" });
+        await _repo.SaveSessionAsync(new StudySession { ExamId = examId, Minutes = 30, StartedAt = new DateTime(2026, 6, 2) });
+
+        await _repo.DeleteExamAsync(examId);
+
+        Assert.Empty(await _repo.GetSessionsAsync(examId));
+        Assert.Empty(await _repo.GetAllSessionsAsync());
+    }
 }

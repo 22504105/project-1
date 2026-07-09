@@ -21,6 +21,7 @@ public class SqlitePlannerRepository : IPlannerRepository
         await _db.CreateTableAsync<Exam>();
         await _db.CreateTableAsync<Topic>();
         await _db.CreateTableAsync<AppSettings>();
+        await _db.CreateTableAsync<StudySession>();
         _initialized = true;
     }
 
@@ -53,6 +54,7 @@ public class SqlitePlannerRepository : IPlannerRepository
     {
         await InitializeAsync();
         await _db.ExecuteAsync("DELETE FROM Topic WHERE ExamId = ?", id);
+        await _db.ExecuteAsync("DELETE FROM StudySession WHERE ExamId = ?", id);
         await _db.DeleteAsync<Exam>(id);
     }
 
@@ -98,5 +100,29 @@ public class SqlitePlannerRepository : IPlannerRepository
         await InitializeAsync();
         settings.Id = 1;
         await _db.InsertOrReplaceAsync(settings);
+    }
+
+    public async Task<int> SaveSessionAsync(StudySession session)
+    {
+        await InitializeAsync();
+        await _db.InsertAsync(session);
+        return session.Id;
+    }
+
+    public async Task<List<StudySession>> GetSessionsAsync(int examId)
+    {
+        await InitializeAsync();
+        return await _db.Table<StudySession>()
+            .Where(s => s.ExamId == examId)
+            .OrderBy(s => s.StartedAt)
+            .ToListAsync();
+    }
+
+    public async Task<List<StudySession>> GetAllSessionsAsync()
+    {
+        await InitializeAsync();
+        return await _db.Table<StudySession>()
+            .OrderBy(s => s.StartedAt)
+            .ToListAsync();
     }
 }
