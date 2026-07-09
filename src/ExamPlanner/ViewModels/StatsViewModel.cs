@@ -1,12 +1,15 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using ExamPlanner.Controls;
 using ExamPlanner.Core.Data;
+using ExamPlanner.Core.Models;
 using ExamPlanner.Core.Services;
 
 namespace ExamPlanner.ViewModels;
 
 public sealed record ExamStat(string Name, string MinutesText);
 public sealed record DayStat(string DayLabel, string MinutesText, double BarWidth, bool HasValue);
+public sealed record DayApples(string DayLabel, string ApplesText, string CountText);
 
 public partial class StatsViewModel : ObservableObject
 {
@@ -15,18 +18,23 @@ public partial class StatsViewModel : ObservableObject
 
 	private readonly IPlannerRepository _repo;
 	private readonly StatsService _stats;
+	private readonly PlannerService _planner;
 
 	[ObservableProperty] private string _totalText = "0 мин";
 	[ObservableProperty] private string _todayText = "0 мин";
 	[ObservableProperty] private bool _isEmpty = true;
+	[ObservableProperty] private string _totalApplesText = "0";
+	[ObservableProperty] private bool _hasApples;
 
 	public ObservableCollection<ExamStat> PerExam { get; } = new();
 	public ObservableCollection<DayStat> PerDay { get; } = new();
+	public ObservableCollection<DayApples> PerDayApples { get; } = new();
 
-	public StatsViewModel(IPlannerRepository repo, StatsService stats)
+	public StatsViewModel(IPlannerRepository repo, StatsService stats, PlannerService planner)
 	{
 		_repo = repo;
 		_stats = stats;
+		_planner = planner;
 	}
 
 	public async Task LoadAsync()
@@ -62,6 +70,56 @@ public partial class StatsViewModel : ObservableObject
 				width,
 				d.Minutes > 0));
 		}
+
+		await LoadApplesAsync(daily);
+	}
+
+	// "Яблоки по дням": mirrors the timer tree's apple rule (StudyTreeView).
+	// For each day, apples grow once studied minutes pass the daily target:
+	// fraction = studiedMinutes / dailyTargetMinutes; every extra AppleStep (15%)
+	// beyond 1.0 yields one apple, capped at MaxApples (9).
+	// The current recommended target is used as the reference for every day —
+	// a documented simplification, since historical per-day targets aren't stored.
+	private async Task LoadApplesAsync(IReadOnlyList<DayMinutes> daily)
+	{
+		var exams = await _repo.GetExamsAsync();
+		var data = new List<(Exam, IReadOnlyList<Topic>)>();
+		foreach (var exam in exams)
+			data.Add((exam, await _repo.GetTopicsAsync(exam.Id)));
+
+		var settings = await _repo.GetSettingsAsync();
+		var availableHours = _planner.HoursForDay(settings, DateTime.Now);
+		var dailyTargetMinutes = _planner
+			.BuildDashboard(data, availableHours, DateTime.Now)
+			.RecommendedMinutesPerDay;
+
+		PerDayApples.Clear();
+		int totalApples = 0;
+		// Newest first so today sits at the top of the breakdown.
+		foreach (var d in daily.Reverse())
+		{
+			int apples = ApplesForDay(d.Minutes, dailyTargetMinutes);
+			if (apples <= 0)
+				continue;
+			totalApples += apples;
+			PerDayApples.Add(new DayApples(
+				d.Day.ToString("dd.MM"),
+				string.Concat(Enumerable.Repeat("🍎", Math.Min(apples, StudyTreeView.MaxApples))),
+				apples.ToString()));
+		}
+
+		TotalApplesText = totalApples.ToString();
+		HasApples = totalApples > 0;
+	}
+
+	private static int ApplesForDay(int minutes, double dailyTargetMinutes)
+	{
+		if (dailyTargetMinutes <= 0)
+			return 0;
+		var fraction = minutes / dailyTargetMinutes;
+		return fraction > 1
+			? Math.Min(StudyTreeView.MaxApples, (int)Math.Floor((fraction - 1) / StudyTreeView.AppleStep))
+			: 0;
 	}
 
 	private static string FormatMinutes(int minutes)

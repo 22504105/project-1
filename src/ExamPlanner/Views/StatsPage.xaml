@@ -28,6 +28,47 @@
         <Label Text="Пока нет учебных сессий. Запусти таймер на экране экзамена."
                Style="{StaticResource SecondaryLabel}" IsVisible="{Binding IsEmpty}" />
 
+        <!-- Яблоки по дням: grand total on top, then the per-day breakdown -->
+        <Border Style="{StaticResource Card}" IsVisible="{Binding IsEmpty, Converter={StaticResource InvertBool}}">
+            <VerticalStackLayout Spacing="12">
+                <Label Text="Яблоки по дням" FontSize="16" FontAttributes="Bold" />
+
+                <!-- Grand total tile -->
+                <Border Stroke="Transparent" StrokeShape="RoundRectangle 14" Padding="16,14"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource AccentTintLight}, Dark={StaticResource AccentTintDark}}">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14" VerticalOptions="Center">
+                        <Label Grid.Column="0" Text="🍎" FontSize="40" VerticalOptions="Center" />
+                        <VerticalStackLayout Grid.Column="1" Spacing="0" VerticalOptions="Center">
+                            <Label Text="{Binding TotalApplesText}" FontFamily="InterSemibold" FontSize="40"
+                                   TextColor="{AppThemeBinding Light={StaticResource OnTintLight}, Dark={StaticResource OnTintDark}}" />
+                            <Label Text="всего за 14 дней"
+                                   TextColor="{AppThemeBinding Light={StaticResource OnTintLight}, Dark={StaticResource OnTintDark}}" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </Border>
+
+                <!-- Per-day breakdown -->
+                <VerticalStackLayout BindableLayout.ItemsSource="{Binding PerDayApples}" Spacing="8"
+                                     IsVisible="{Binding HasApples}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="vm:DayApples">
+                            <Grid ColumnDefinitions="52,*,Auto" ColumnSpacing="8">
+                                <Label Grid.Column="0" Text="{Binding DayLabel}"
+                                       Style="{StaticResource SecondaryLabel}" VerticalOptions="Center" />
+                                <Label Grid.Column="1" Text="{Binding ApplesText}" FontSize="18"
+                                       LineBreakMode="TailTruncation" VerticalOptions="Center" />
+                                <Label Grid.Column="2" Text="{Binding CountText}"
+                                       Style="{StaticResource SecondaryLabel}" VerticalOptions="Center" />
+                            </Grid>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <Label Text="Собери больше минут, чем дневная цель, чтобы вырастить яблоки 🍎"
+                       Style="{StaticResource SecondaryLabel}" IsVisible="{Binding HasApples, Converter={StaticResource InvertBool}}" />
+            </VerticalStackLayout>
+        </Border>
+
         <Border Style="{StaticResource Card}" IsVisible="{Binding IsEmpty, Converter={StaticResource InvertBool}}">
             <VerticalStackLayout Spacing="10">
                 <Label Text="По экзаменам" FontSize="16" FontAttributes="Bold" />

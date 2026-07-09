@@ -7,9 +7,9 @@
     Title="ExamPlanner">
 
     <TabBar>
-        <ShellContent Title="Экзамены" Route="dashboard" ContentTemplate="{DataTemplate views:DashboardPage}" />
-        <ShellContent Title="Сегодня" Route="today" ContentTemplate="{DataTemplate views:TodayPage}" />
-        <ShellContent Title="Статистика" Route="stats" ContentTemplate="{DataTemplate views:StatsPage}" />
-        <ShellContent Title="Настройки" Route="settings" ContentTemplate="{DataTemplate views:SettingsPage}" />
+        <ShellContent Title="Экзамены" Icon="ic_exams.png" Route="dashboard" ContentTemplate="{DataTemplate views:DashboardPage}" />
+        <ShellContent Title="Сегодня" Icon="ic_today.png" Route="today" ContentTemplate="{DataTemplate views:TodayPage}" />
+        <ShellContent Title="Статистика" Icon="ic_stats.png" Route="stats" ContentTemplate="{DataTemplate views:StatsPage}" />
+        <ShellContent Title="Настройки" Icon="ic_settings.png" Route="settings" ContentTemplate="{DataTemplate views:SettingsPage}" />
     </TabBar>
 </Shell>
