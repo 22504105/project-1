@@ -19,6 +19,9 @@ packages/
 Backup/
 UpgradeLog*.htm
 
+# Superpowers SDD scratch (ledger, briefs, review packages)
+.superpowers/
+
 # OS
 Thumbs.db
 .DS_Store
