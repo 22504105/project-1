@@ -19,25 +19,28 @@
     <Color x:Key="OnAccentLight">#FFFFFF</Color>
     <Color x:Key="OnAccentDark">#08110C</Color>
     <!-- Soft green tint used for subtle fills / selected states -->
-    <Color x:Key="AccentTintLight">#CFE3D8</Color>
+    <Color x:Key="AccentTintLight">#C3D8CB</Color>
     <Color x:Key="AccentTintDark">#1F4A38</Color>
+    <!-- Text drawn on the tint (tonal buttons) -->
+    <Color x:Key="OnTintLight">#1F4A38</Color>
+    <Color x:Key="OnTintDark">#A9E8C6</Color>
 
-    <!-- Neutrals: green-tinted gray ramp from off-white to near-black -->
-    <Color x:Key="PageBackgroundLight">#F4F7F4</Color>
+    <!-- Neutrals: soft gray-green surfaces (light) to near-black (dark) -->
+    <Color x:Key="PageBackgroundLight">#D8E1D9</Color>
     <Color x:Key="PageBackgroundDark">#0F1311</Color>
-    <Color x:Key="SurfaceLight">#FFFFFF</Color>
+    <Color x:Key="SurfaceLight">#E8EEE8</Color>
     <Color x:Key="SurfaceDark">#1A211D</Color>
     <Color x:Key="PrimaryTextLight">#18201B</Color>
     <Color x:Key="PrimaryTextDark">#E7ECE9</Color>
-    <Color x:Key="SecondaryTextLight">#515B55</Color>
+    <Color x:Key="SecondaryTextLight">#49524C</Color>
     <Color x:Key="SecondaryTextDark">#A6B0AA</Color>
-    <Color x:Key="BorderLight">#D5DDD8</Color>
+    <Color x:Key="BorderLight">#BFCBC1</Color>
     <Color x:Key="BorderDark">#2E3833</Color>
 
     <!-- Status colors -->
     <Color x:Key="DangerLight">#B3261E</Color>
     <Color x:Key="DangerDark">#F2B8B5</Color>
-    <Color x:Key="WarningLight">#8A5300</Color>
+    <Color x:Key="WarningLight">#7E4B00</Color>
     <Color x:Key="WarningDark">#E0A85A</Color>
 
     <!-- ==========================================================

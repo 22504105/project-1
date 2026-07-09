@@ -469,7 +469,7 @@
 
     <!-- Tonal (soft) button: minimal secondary action -->
     <Style TargetType="Button" x:Key="TonalButton">
-        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource AccentGreenLight}, Dark={StaticResource AccentGreenDark}}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource OnTintLight}, Dark={StaticResource OnTintDark}}" />
         <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource AccentTintLight}, Dark={StaticResource AccentTintDark}}" />
     </Style>
 
