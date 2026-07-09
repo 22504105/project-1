@@ -29,6 +29,9 @@ public static class MauiProgram
 		builder.Services.AddTransient<EditExamPage>();
 		builder.Services.AddTransient<EditExamViewModel>();
 
+		builder.Services.AddTransient<ExamDetailPage>();
+		builder.Services.AddTransient<ExamDetailViewModel>();
+
 #if DEBUG
 		builder.Logging.AddDebug();
 #endif
