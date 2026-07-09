@@ -1,5 +1,6 @@
 using ExamPlanner.Core.Data;
 using ExamPlanner.Core.Services;
+using ExamPlanner.ViewModels;
 using ExamPlanner.Views;
 using Microsoft.Extensions.Logging;
 
@@ -23,6 +24,7 @@ public static class MauiProgram
 		builder.Services.AddSingleton<PlannerService>();
 
 		builder.Services.AddTransient<DashboardPage>();
+		builder.Services.AddTransient<DashboardViewModel>();
 
 #if DEBUG
 		builder.Logging.AddDebug();
