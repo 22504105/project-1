@@ -101,4 +101,8 @@ public partial class ExamDetailViewModel : ObservableObject
 	[RelayCommand]
 	private async Task EditExam()
 		=> await Shell.Current.GoToAsync($"editexam?examId={ExamId}");
+
+	[RelayCommand]
+	private async Task StartTimer()
+		=> await Shell.Current.GoToAsync($"timer?examId={ExamId}");
 }

@@ -9,6 +9,7 @@
     x:DataType="vm:ExamDetailViewModel"
     Title="{Binding Title}">
     <ContentPage.ToolbarItems>
+        <ToolbarItem Text="⏱" Command="{Binding StartTimerCommand}" />
         <ToolbarItem Text="✎" Command="{Binding EditExamCommand}" />
     </ContentPage.ToolbarItems>
     <Grid>
