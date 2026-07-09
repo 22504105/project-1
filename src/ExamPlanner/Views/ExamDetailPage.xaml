@@ -5,17 +5,20 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:vm="clr-namespace:ExamPlanner.ViewModels"
     xmlns:models="clr-namespace:ExamPlanner.Core.Models;assembly=ExamPlanner.Core"
+    xmlns:controls="clr-namespace:ExamPlanner.Controls"
     x:DataType="vm:ExamDetailViewModel"
     Title="{Binding Title}">
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="✎" Command="{Binding EditExamCommand}" />
     </ContentPage.ToolbarItems>
+    <Grid>
+    <controls:SquaresBackgroundView />
     <Grid RowDefinitions="Auto,Auto,*" Padding="16" RowSpacing="10">
         <Label Grid.Row="0" Text="{Binding PaceText}" FontSize="15" FontAttributes="Bold" />
 
-        <Grid Grid.Row="1" ColumnDefinitions="*,Auto" ColumnSpacing="8">
-            <Entry Grid.Column="0" Text="{Binding NewTopicTitle}" Placeholder="Новая тема" />
-            <Button Grid.Column="1" Text="Добавить" Command="{Binding AddTopicCommand}" />
+        <Grid Grid.Row="1" ColumnDefinitions="*,Auto" ColumnSpacing="10">
+            <Entry Grid.Column="0" Text="{Binding NewTopicTitle}" Placeholder="Новая тема" VerticalOptions="Center" />
+            <Button Grid.Column="1" Text="Добавить" Command="{Binding AddTopicCommand}" Style="{StaticResource TonalButton}" />
         </Grid>
 
         <CollectionView Grid.Row="2" ItemsSource="{Binding Topics}">
@@ -24,24 +27,41 @@
                     <SwipeView>
                         <SwipeView.RightItems>
                             <SwipeItems>
-                                <SwipeItem Text="Удалить" BackgroundColor="DarkRed"
+                                <SwipeItem Text="Удалить"
+                                           BackgroundColor="{StaticResource DangerLight}"
                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ExamDetailViewModel}}, Path=DeleteTopicCommand}"
                                            CommandParameter="{Binding .}" />
                             </SwipeItems>
                         </SwipeView.RightItems>
-                        <Grid Padding="10" ColumnDefinitions="Auto,*">
-                            <Label Grid.Column="0" FontSize="18" Text="{Binding Status, Converter={StaticResource StatusToIcon}}" />
-                            <Label Grid.Column="1" Margin="10,0,0,0" VerticalOptions="Center"
-                                   Text="{Binding Title}" FontSize="16" />
-                            <Grid.GestureRecognizers>
-                                <TapGestureRecognizer
-                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ExamDetailViewModel}}, Path=CycleStatusCommand}"
-                                    CommandParameter="{Binding .}" />
-                            </Grid.GestureRecognizers>
-                        </Grid>
+                        <Border Style="{StaticResource Card}" Padding="16" Margin="0,0,0,10">
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14">
+                                <Label Grid.Column="0" FontSize="18" VerticalOptions="Center"
+                                       Text="{Binding Status, Converter={StaticResource StatusToIcon}}">
+                                    <Label.Triggers>
+                                        <DataTrigger TargetType="Label" Binding="{Binding Status}" Value="Done">
+                                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource AccentGreenLight}, Dark={StaticResource AccentGreenDark}}" />
+                                        </DataTrigger>
+                                        <DataTrigger TargetType="Label" Binding="{Binding Status}" Value="InProgress">
+                                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource WarningLight}, Dark={StaticResource WarningDark}}" />
+                                        </DataTrigger>
+                                        <DataTrigger TargetType="Label" Binding="{Binding Status}" Value="NotStarted">
+                                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource SecondaryTextLight}, Dark={StaticResource SecondaryTextDark}}" />
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+                                <Label Grid.Column="1" VerticalOptions="Center"
+                                       Text="{Binding Title}" FontSize="16" />
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ExamDetailViewModel}}, Path=CycleStatusCommand}"
+                                        CommandParameter="{Binding .}" />
+                                </Grid.GestureRecognizers>
+                            </Grid>
+                        </Border>
                     </SwipeView>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
+    </Grid>
     </Grid>
 </ContentPage>

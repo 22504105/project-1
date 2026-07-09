@@ -4,14 +4,43 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:vm="clr-namespace:ExamPlanner.ViewModels"
+    xmlns:controls="clr-namespace:ExamPlanner.Controls"
     x:DataType="vm:SettingsViewModel"
     Title="Настройки">
-    <VerticalStackLayout Padding="16" Spacing="12">
-        <Label Text="Сколько часов в день можешь заниматься" />
-        <Stepper Minimum="0" Maximum="16" Increment="0.5"
-                 Value="{Binding AvailableHoursPerDay}" />
-        <Label Text="{Binding AvailableHoursPerDay, StringFormat='{0:0.0} ч/день'}" FontSize="18" />
-        <Button Text="Сохранить" Command="{Binding SaveCommand}" />
-        <Label Text="{Binding StatusText}" TextColor="Green" />
+    <Grid>
+    <controls:SquaresBackgroundView />
+    <ScrollView>
+    <VerticalStackLayout Padding="16" Spacing="16">
+
+        <Border Style="{StaticResource Card}">
+            <VerticalStackLayout Spacing="10">
+                <Label Text="Тема оформления" FontSize="16" FontAttributes="Bold" />
+                <Label Style="{StaticResource SecondaryLabel}"
+                       Text="Выбор применяется сразу ко всему приложению." />
+                <Picker Title="Тема" SelectedIndex="{Binding SelectedThemeIndex}">
+                    <Picker.ItemsSource>
+                        <x:Array Type="{x:Type x:String}">
+                            <x:String>Системная</x:String>
+                            <x:String>Тёмная</x:String>
+                        </x:Array>
+                    </Picker.ItemsSource>
+                </Picker>
+            </VerticalStackLayout>
+        </Border>
+
+        <Border Style="{StaticResource Card}">
+            <VerticalStackLayout Spacing="10">
+                <Label Text="Нагрузка" FontSize="16" FontAttributes="Bold" />
+                <Label Text="Сколько часов в день можешь заниматься" />
+                <Stepper Minimum="0" Maximum="16" Increment="0.5"
+                         Value="{Binding AvailableHoursPerDay}" HorizontalOptions="Start" />
+                <Label Text="{Binding AvailableHoursPerDay, StringFormat='{0:0.0} ч/день'}" FontSize="18" />
+                <Button Text="Сохранить" Command="{Binding SaveCommand}" HorizontalOptions="Start" />
+                <Label Text="{Binding StatusText}" Style="{StaticResource SuccessLabel}" />
+            </VerticalStackLayout>
+        </Border>
+
     </VerticalStackLayout>
+    </ScrollView>
+    </Grid>
 </ContentPage>
