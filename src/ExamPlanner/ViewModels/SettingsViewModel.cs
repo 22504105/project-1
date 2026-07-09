@@ -13,7 +13,8 @@ public partial class SettingsViewModel : ObservableObject
 	[ObservableProperty] private double _availableHoursPerDay = 2;
 	[ObservableProperty] private string _statusText = string.Empty;
 
-	// Theme picker: 0 = Системная, 1 = Светлая, 2 = Тёмная
+	// Theme picker: 0 = Системная, 1 = Тёмная. The light look is reached
+	// through «Системная» when the OS itself is in light mode.
 	[ObservableProperty] private int _selectedThemeIndex;
 
 	public SettingsViewModel(IPlannerRepository repo)
@@ -30,20 +31,10 @@ public partial class SettingsViewModel : ObservableObject
 
 	partial void OnSelectedThemeIndexChanged(int value)
 	{
-		ThemeService.Current = value switch
-		{
-			1 => AppTheme.Light,
-			2 => AppTheme.Dark,
-			_ => AppTheme.Unspecified
-		};
+		ThemeService.Current = value == 1 ? AppTheme.Dark : AppTheme.Unspecified;
 	}
 
-	private static int ThemeToIndex(AppTheme theme) => theme switch
-	{
-		AppTheme.Light => 1,
-		AppTheme.Dark => 2,
-		_ => 0
-	};
+	private static int ThemeToIndex(AppTheme theme) => theme == AppTheme.Dark ? 1 : 0;
 
 	[RelayCommand]
 	private async Task Save()

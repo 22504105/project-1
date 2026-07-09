@@ -21,7 +21,6 @@
                     <Picker.ItemsSource>
                         <x:Array Type="{x:Type x:String}">
                             <x:String>Системная</x:String>
-                            <x:String>Светлая</x:String>
                             <x:String>Тёмная</x:String>
                         </x:Array>
                     </Picker.ItemsSource>

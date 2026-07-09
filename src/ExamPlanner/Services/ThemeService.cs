@@ -11,14 +11,23 @@ public static class ThemeService
 {
 	private const string PreferenceKey = "app_theme";
 
-	/// <summary>The persisted theme preference (System / Light / Dark).</summary>
+	/// <summary>
+	/// The persisted theme preference. Only System (Unspecified) and Dark are
+	/// selectable; any legacy saved "Light" is normalized to System, so the
+	/// light look is reached through System when the OS is in light mode.
+	/// </summary>
 	public static AppTheme Current
 	{
-		get => (AppTheme)Preferences.Default.Get(PreferenceKey, (int)AppTheme.Unspecified);
+		get
+		{
+			var saved = (AppTheme)Preferences.Default.Get(PreferenceKey, (int)AppTheme.Unspecified);
+			return saved == AppTheme.Dark ? AppTheme.Dark : AppTheme.Unspecified;
+		}
 		set
 		{
-			Preferences.Default.Set(PreferenceKey, (int)value);
-			Apply(value);
+			var normalized = value == AppTheme.Dark ? AppTheme.Dark : AppTheme.Unspecified;
+			Preferences.Default.Set(PreferenceKey, (int)normalized);
+			Apply(normalized);
 		}
 	}
 
