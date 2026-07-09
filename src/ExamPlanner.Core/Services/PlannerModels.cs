@@ -24,3 +24,10 @@ public record DashboardSummary(
     double RecommendedMinutesPerDay,
     double AvailableMinutesPerDay,
     bool Behind);
+
+public record DayHours(DayOfWeek Day, double Hours);
+
+public record WeeklyScheduleProposal(
+    IReadOnlyList<DayHours> Days,   // 7 entries, Monday..Sunday
+    double RequiredHoursPerDay,
+    bool Feasible);

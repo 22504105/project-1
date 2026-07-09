@@ -26,7 +26,10 @@ public class PlannerService
         };
 
     public double HoursForDay(AppSettings settings, DateTime day)
-        => (day.DayOfWeek switch
+        => HoursForWeekday(settings, day.DayOfWeek);
+
+    public double HoursForWeekday(AppSettings settings, DayOfWeek day)
+        => (day switch
         {
             DayOfWeek.Monday => settings.MonHours,
             DayOfWeek.Tuesday => settings.TueHours,
@@ -36,6 +39,38 @@ public class PlannerService
             DayOfWeek.Saturday => settings.SatHours,
             _ => settings.SunHours
         }) ?? settings.AvailableHoursPerDay;
+
+    private static readonly DayOfWeek[] MondayToSunday =
+    {
+        DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday,
+        DayOfWeek.Friday, DayOfWeek.Saturday, DayOfWeek.Sunday
+    };
+
+    public WeeklyScheduleProposal ProposeWeeklySchedule(
+        IReadOnlyList<(Exam exam, IReadOnlyList<Topic> topics)> data,
+        AppSettings settings,
+        DateTime today)
+    {
+        var requiredMinsPerDay = data
+            .Select(d => BuildPace(d.exam, d.topics, today))
+            .Where(p => p.RemainingTopics > 0)
+            .Sum(p => p.NeedMinutesPerDay);
+
+        var studyDayCount = MondayToSunday.Count(d => HoursForWeekday(settings, d) > 0);
+
+        double perStudyDayHours = 0;
+        if (studyDayCount > 0)
+        {
+            var perStudyDayMins = requiredMinsPerDay * 7 / studyDayCount;
+            perStudyDayHours = Math.Round(perStudyDayMins / 60 * 2, MidpointRounding.AwayFromZero) / 2;
+        }
+
+        var days = MondayToSunday
+            .Select(d => new DayHours(d, HoursForWeekday(settings, d) > 0 ? perStudyDayHours : 0))
+            .ToList();
+
+        return new WeeklyScheduleProposal(days, requiredMinsPerDay / 60, studyDayCount > 0);
+    }
 
     public ExamPace BuildPace(Exam exam, IReadOnlyList<Topic> topics, DateTime today)
     {
