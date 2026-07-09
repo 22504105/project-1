@@ -91,13 +91,29 @@ public sealed class StudyTreeView : GraphicsView
 			return true;
 		}
 
-		// Deterministic apple slots inside the canopy (relative to canopy radius).
-		private static readonly (float dx, float dy)[] AppleSlots =
+		private static float Frac(float x) => x - MathF.Floor(x);
+
+		// A small stylised apple: dimpled two-lobe body, stem, leaf and highlight.
+		private static void DrawApple(ICanvas canvas, float ax, float ay, float ar,
+			Color body, Color hi, Color stem, Color leaf)
 		{
-			(-0.45f,  0.10f), ( 0.42f, -0.05f), ( 0.05f,  0.35f),
-			(-0.20f, -0.35f), ( 0.30f,  0.30f), (-0.55f, -0.18f),
-			( 0.58f,  0.20f),
-		};
+			// stem
+			canvas.StrokeColor = stem;
+			canvas.StrokeLineCap = LineCap.Round;
+			canvas.StrokeSize = Math.Max(1.5f, ar * 0.16f);
+			canvas.DrawLine(ax, ay - ar * 0.55f, ax + ar * 0.12f, ay - ar * 1.02f);
+			// leaf
+			canvas.FillColor = leaf;
+			canvas.FillEllipse(ax + ar * 0.05f, ay - ar * 1.12f, ar * 0.62f, ar * 0.34f);
+			// body: two lobes + rounded base = apple silhouette with a dimpled top
+			canvas.FillColor = body;
+			canvas.FillCircle(ax - ar * 0.32f, ay, ar * 0.72f);
+			canvas.FillCircle(ax + ar * 0.32f, ay, ar * 0.72f);
+			canvas.FillCircle(ax, ay + ar * 0.20f, ar * 0.74f);
+			// highlight
+			canvas.FillColor = hi;
+			canvas.FillEllipse(ax - ar * 0.58f, ay - ar * 0.42f, ar * 0.48f, ar * 0.34f);
+		}
 
 		public void Draw(ICanvas canvas, RectF rect)
 		{
@@ -107,7 +123,8 @@ public sealed class StudyTreeView : GraphicsView
 			var canopyBack = dark ? Color.FromRgb(0x2F, 0x6A, 0x4E) : Color.FromRgb(0x24, 0x53, 0x3D);
 			var canopyFront = dark ? Color.FromRgb(0x4E, 0x9E, 0x77) : Color.FromRgb(0x2E, 0x6B, 0x4F);
 			var appleColor = dark ? Color.FromRgb(0xE2, 0x54, 0x4C) : Color.FromRgb(0xD6, 0x45, 0x3F);
-			var appleHi = dark ? Color.FromRgb(0xF3, 0x8C, 0x86) : Color.FromRgb(0xE9, 0x82, 0x7B);
+			var appleHi = dark ? Color.FromRgb(0xFB, 0xC4, 0xC0) : Color.FromRgb(0xF2, 0xB0, 0xAA);
+			var leafColor = dark ? Color.FromRgb(0x86, 0xD6, 0xA8) : Color.FromRgb(0x3F, 0x8C, 0x62);
 			var groundColor = dark ? Color.FromRgb(0x2E, 0x38, 0x33) : Color.FromRgb(0xBF, 0xCB, 0xC1);
 
 			float g = (float)Math.Clamp(_shown, 0, 1);
@@ -181,16 +198,15 @@ public sealed class StudyTreeView : GraphicsView
 
 			if (apples > 0 && g >= 0.999f)
 			{
-				float ar = Math.Max(4f, canopyR * 0.12f);
+				float ar = Math.Max(5f, canopyR * 0.14f);
 				for (int i = 0; i < apples; i++)
 				{
-					var (dx, dy) = AppleSlots[i];
-					float ax = cx + dx * canopyR;
-					float ay = cy + dy * canopyR;
-					canvas.FillColor = appleColor;
-					canvas.FillCircle(ax, ay, ar);
-					canvas.FillColor = appleHi;
-					canvas.FillCircle(ax - ar * 0.30f, ay - ar * 0.30f, ar * 0.34f);
+					// deterministic pseudo-random scatter across the canopy
+					float ang = Frac(MathF.Sin(i * 12.9898f + 0.7f) * 43758.547f) * MathF.PI * 2f;
+					float rad = 0.18f + Frac(MathF.Sin(i * 78.233f + 3.1f) * 24634.633f) * 0.55f;
+					float ax = cx + MathF.Cos(ang) * rad * canopyR;
+					float ay = cy - canopyR * 0.06f + MathF.Sin(ang) * rad * canopyR * 0.80f;
+					DrawApple(canvas, ax, ay, ar, appleColor, appleHi, trunkColor, leafColor);
 				}
 			}
 		}
