@@ -8,5 +8,7 @@
 
     <TabBar>
         <ShellContent Title="Экзамены" Route="dashboard" ContentTemplate="{DataTemplate views:DashboardPage}" />
+        <ShellContent Title="Сегодня" Route="today" ContentTemplate="{DataTemplate views:TodayPage}" />
+        <ShellContent Title="Настройки" Route="settings" ContentTemplate="{DataTemplate views:SettingsPage}" />
     </TabBar>
 </Shell>
