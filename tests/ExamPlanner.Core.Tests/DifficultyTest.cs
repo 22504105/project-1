@@ -100,4 +100,26 @@ public class DifficultyTest
         Assert.Equal(15d, plan.UsedMinutes);
         Assert.Contains(1, plan.NotFittedExamIds);
     }
+
+    [Fact]
+    public void BuildDailyPlan_Skips_TooBig_Topic_And_Fits_Later_Smaller_One()
+    {
+        // base 30, daysLeft 1 -> quota 2. Order: Hard (45) then Easy (15). Available 30 min.
+        // Hard doesn't fit; a greedy 'break' would place nothing. Skip-and-continue fits the Easy topic.
+        var exam = new Exam { Id = 1, Name = "M", Date = new DateTime(2026, 6, 2), MinutesPerTopic = 30 };
+        var topics = new List<Topic>
+        {
+            new Topic { Id = 1, ExamId = 1, Position = 0, Title = "Hard", Difficulty = TopicDifficulty.Hard },
+            new Topic { Id = 2, ExamId = 1, Position = 1, Title = "Easy", Difficulty = TopicDifficulty.Easy },
+        };
+        var data = new List<(Exam, IReadOnlyList<Topic>)> { (exam, topics) };
+
+        var plan = _svc.BuildDailyPlan(data, availableHoursPerDay: 0.5, Today); // 30 min
+
+        Assert.Single(plan.Items);
+        Assert.Equal(2, plan.Items[0].TopicId);    // the Easy topic got placed
+        Assert.Equal(15, plan.Items[0].Minutes);
+        Assert.Equal(15d, plan.UsedMinutes);
+        Assert.Contains(1, plan.NotFittedExamIds);  // quota not fully met
+    }
 }
