@@ -29,8 +29,7 @@
                                 <Label Style="{StaticResource SecondaryLabel}"
                                        Text="{Binding RemainingTopics, StringFormat='осталось {0} тем'}" />
                             </VerticalStackLayout>
-                            <Label Grid.Column="1" VerticalOptions="Center"
-                                   Text="🔥" IsVisible="{Binding IsUrgent}" />
+                            <Border Grid.Column="1" Style="{StaticResource Dot}" IsVisible="{Binding IsUrgent}" />
                             <Grid.GestureRecognizers>
                                 <TapGestureRecognizer
                                     Command="{Binding Source={RelativeSource AncestorType={x:Type vm:DashboardViewModel}}, Path=OpenExamCommand}"

@@ -9,11 +9,11 @@ public class StatusToIconConverter : IValueConverter
 		=> value is TopicStatus s
 			? s switch
 			{
-				TopicStatus.Done => "✅",
-				TopicStatus.InProgress => "🟡",
-				_ => "⬜"
+				TopicStatus.Done => "●",       // ● filled
+				TopicStatus.InProgress => "◐",  // ◐ half
+				_ => "○"                         // ○ ring
 			}
-			: "⬜";
+			: "○";
 
 	public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
 		=> throw new NotSupportedException();
