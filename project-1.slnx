@@ -1,5 +1,10 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/App/App.csproj" />
+    <Project Path="src/ExamPlanner.Core/ExamPlanner.Core.csproj" />
+    <Project Path="src/ExamPlanner/ExamPlanner.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ExamPlanner.Core.Tests/ExamPlanner.Core.Tests.csproj" />
   </Folder>
 </Solution>

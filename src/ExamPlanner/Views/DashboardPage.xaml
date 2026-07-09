@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="ExamPlanner.Views.DashboardPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:ExamPlanner.ViewModels"
+    xmlns:svc="clr-namespace:ExamPlanner.Core.Services;assembly=ExamPlanner.Core"
+    x:DataType="vm:DashboardViewModel"
+    Title="Экзамены">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="＋" Command="{Binding AddExamCommand}" />
+    </ContentPage.ToolbarItems>
+    <Grid RowDefinitions="Auto,*" Padding="16" RowSpacing="12">
+        <VerticalStackLayout Grid.Row="0" Spacing="4">
+            <Label Text="{Binding SummaryText}" FontSize="16" />
+            <Label Text="Не успеваешь при текущей нагрузке!" TextColor="Red"
+                   IsVisible="{Binding Behind}" FontAttributes="Bold" />
+        </VerticalStackLayout>
+
+        <CollectionView Grid.Row="1" ItemsSource="{Binding Exams}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="svc:ExamPace">
+                    <Grid Padding="8" ColumnDefinitions="*,Auto">
+                        <VerticalStackLayout Grid.Column="0">
+                            <Label Text="{Binding Name}" FontSize="18" FontAttributes="Bold" />
+                            <Label Text="{Binding Date, StringFormat='до {0:dd.MM.yyyy}'}" FontSize="13" />
+                            <Label FontSize="13"
+                                   Text="{Binding RemainingTopics, StringFormat='осталось {0} тем'}" />
+                        </VerticalStackLayout>
+                        <Label Grid.Column="1" VerticalOptions="Center" TextColor="Red"
+                               Text="🔥" IsVisible="{Binding IsUrgent}" />
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:DashboardViewModel}}, Path=OpenExamCommand}"
+                                CommandParameter="{Binding .}" />
+                        </Grid.GestureRecognizers>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

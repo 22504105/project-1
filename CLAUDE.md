@@ -29,10 +29,22 @@
 - Solution Visual Studio (`project-1.slnx`, новый формат `.slnx`).
 - Remote: https://github.com/22504105/project-1
 - Основная ветка: `main`.
-- Стартовый проект: `.NET 8` console app в `src/App` (`App.csproj`).
-- Сборка из CLI: `dotnet build src/App/App.csproj`. Формат `.slnx` из CLI требует
-  SDK ≥ 9.0.200 (сейчас установлен 8.0.422 → `dotnet build project-1.slnx` не работает);
-  в Visual Studio 2026 `.slnx` собирается штатно.
+- **Расположение репо**: `E:\Projects\project-1` (ASCII-путь). Перенесён сюда с
+  `C:\Users\Евгений\source\repos\22504105\project-1` — Android-сборка (AAPT2) падает
+  с `error APT2265` на кириллическом пути. Работать только из `E:\Projects\...`.
+- **Направление продукта**: ExamPlanner — приложение для студентов (темы к экзаменам,
+  прогресс, планирование времени). Дизайн MVP и роадмап отложенных фич (сервер/аккаунты,
+  iOS, уведомления, тесты-квизы, ИИ и т.д.) — в `docs/superpowers/specs/`. **Напоминание:**
+  отложенное не забываем — оно перечислено в разделе «Дальнейшие фазы» спеки.
+- Проекты: `src/App` (`.NET 8` console, заготовка) · `src/ExamPlanner.Core` (`net8.0`,
+  логика+тесты, 14/14) · `src/ExamPlanner` (`net10.0-android`, MAUI-приложение MVVM).
+- **MAUI-приложение** (`src/ExamPlanner`): собрать/запустить на эмуляторе —
+  `"C:\Program Files\dotnet\dotnet.exe" build src/ExamPlanner -f net10.0-android -t:Run`.
+  DI в `MauiProgram.cs`: `IPlannerRepository` (singleton, БД `FileSystem.AppDataDirectory/examplanner.db3`),
+  `PlannerService`; Shell TabBar → `DashboardPage`. Package id `com.companyname.examplanner`.
+- Тесты ядра: `"C:\Program Files\dotnet\dotnet.exe" test tests/ExamPlanner.Core.Tests`.
+- Формат `.slnx` из CLI требует SDK ≥ 9.0.200; сейчас есть 10.0.301 → должно работать,
+  но проекты в `.slnx` всё равно правим ручным редактированием XML (см. план).
 
 ## Окружение (Windows) и грабли
 
@@ -45,8 +57,14 @@
   - `Get-Content -Raw` читает UTF-8 как ANSI (кракозябры). Для проверки: `[IO.File]::ReadAllBytes`
     + `[Text.Encoding]::UTF8.GetString`.
   - Подать файл в stdin процесса: `Start-Process -RedirectStandardInput <file>` (`cmd /c ... <` блокируется песочницей).
-- **.NET SDK**: глобально стоит только 8.0.422 (ставился через winget). `dotnet` не в PATH у Bash —
+- **Android + кириллица (APT2265)**: AAPT2 не умеет не-ASCII пути. Держать репо на
+  `E:\Projects\...`. Именно поэтому проект и вынесен с `C:\Users\Евгений\...`.
+- **.NET SDK**: установлены 8.0.422 и **10.0.301**. `dotnet` не в PATH у Bash —
   вызывать `"C:\Program Files\dotnet\dotnet.exe"`. Есть VS 2026 + MSBuild 18.7.
+- **MAUI-ворклоад установлен** (`maui-android 10.0.20` + `android`/`ios`/`maccatalyst`).
+- **Android SDK**: `E:\AndroidSdk` (`ANDROID_HOME`/`ANDROID_SDK_ROOT`); AVD `examplanner`
+  в `E:\AndroidAvd` (`ANDROID_AVD_HOME`); `JAVA_HOME` = JDK 21. adb/emulator под `E:\AndroidSdk`.
+  Запуск эмулятора: `E:\AndroidSdk\emulator\emulator.exe -avd examplanner`.
 
 ## Оснастка Claude Code
 
