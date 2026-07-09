@@ -12,12 +12,28 @@ public class PlannerService
     public int TodayQuota(int remaining, int daysLeft)
         => remaining <= 0 ? 0 : (int)Math.Ceiling((double)remaining / daysLeft);
 
+    public int EffectiveMinutes(Topic topic, Exam exam)
+        => (int)Math.Round(
+            exam.MinutesPerTopic * Multiplier(topic.Difficulty),
+            MidpointRounding.AwayFromZero);
+
+    private static double Multiplier(TopicDifficulty difficulty)
+        => difficulty switch
+        {
+            TopicDifficulty.Easy => 0.5,
+            TopicDifficulty.Hard => 1.5,
+            _ => 1.0
+        };
+
     public ExamPace BuildPace(Exam exam, IReadOnlyList<Topic> topics, DateTime today)
     {
         var total = topics.Count;
-        var remaining = topics.Count(t => t.Status != TopicStatus.Done);
+        var remainingTopics = topics.Where(t => t.Status != TopicStatus.Done).ToList();
+        var remaining = remainingTopics.Count;
         var daysLeft = DaysLeft(exam.Date, today);
-        var need = remaining == 0 ? 0d : (double)remaining * exam.MinutesPerTopic / daysLeft;
+        var need = remaining == 0
+            ? 0d
+            : (double)remainingTopics.Sum(t => EffectiveMinutes(t, exam)) / daysLeft;
         var quota = TodayQuota(remaining, daysLeft);
         var urgent = remaining > 0 && daysLeft <= UrgentDaysThreshold;
 
@@ -57,10 +73,11 @@ public class PlannerService
             var placed = 0;
             foreach (var topic in remaining.Take(quota))
             {
-                if (used + exam.MinutesPerTopic <= available)
+                var minutes = EffectiveMinutes(topic, exam);
+                if (used + minutes <= available)
                 {
-                    items.Add(new PlanItem(exam.Id, exam.Name, topic.Id, topic.Title, exam.MinutesPerTopic));
-                    used += exam.MinutesPerTopic;
+                    items.Add(new PlanItem(exam.Id, exam.Name, topic.Id, topic.Title, minutes));
+                    used += minutes;
                     placed++;
                 }
                 else break;

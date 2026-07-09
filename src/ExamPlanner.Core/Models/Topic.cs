@@ -11,4 +11,5 @@ public class Topic
     public string Title { get; set; } = string.Empty;
     public TopicStatus Status { get; set; } = TopicStatus.NotStarted;
     public int Position { get; set; }
+    public TopicDifficulty Difficulty { get; set; } = TopicDifficulty.Medium;
 }
