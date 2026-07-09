@@ -165,7 +165,8 @@ public class PlannerService
                     used += minutes;
                     placed++;
                 }
-                else break;
+                // Skip a topic that doesn't fit and keep trying the rest of the quota
+                // (a smaller later topic may still fit); underfilled quota is flagged below.
             }
 
             if (placed < quota) notFitted.Add(exam.Id);

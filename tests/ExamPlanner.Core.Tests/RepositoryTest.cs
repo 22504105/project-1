@@ -4,6 +4,7 @@ using SQLite;
 
 namespace ExamPlanner.Core.Tests;
 
+[Collection("Sqlite")]
 public class RepositoryTest : IDisposable
 {
     private readonly string _dbPath;
