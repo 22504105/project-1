@@ -15,6 +15,6 @@
         <Entry Text="{Binding MinutesPerTopic}" Keyboard="Numeric" />
         <Button Text="Сохранить" Command="{Binding SaveCommand}" />
         <Button Text="Удалить" Command="{Binding DeleteCommand}"
-                IsVisible="{Binding IsExisting}" BackgroundColor="DarkRed" />
+                IsVisible="{Binding IsExisting}" Style="{StaticResource DangerButton}" />
     </VerticalStackLayout>
 </ContentPage>

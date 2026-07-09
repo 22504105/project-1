@@ -24,21 +24,24 @@
                     <SwipeView>
                         <SwipeView.RightItems>
                             <SwipeItems>
-                                <SwipeItem Text="Удалить" BackgroundColor="DarkRed"
+                                <SwipeItem Text="Удалить"
+                                           BackgroundColor="{StaticResource DangerLight}"
                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ExamDetailViewModel}}, Path=DeleteTopicCommand}"
                                            CommandParameter="{Binding .}" />
                             </SwipeItems>
                         </SwipeView.RightItems>
-                        <Grid Padding="10" ColumnDefinitions="Auto,*">
-                            <Label Grid.Column="0" FontSize="18" Text="{Binding Status, Converter={StaticResource StatusToIcon}}" />
-                            <Label Grid.Column="1" Margin="10,0,0,0" VerticalOptions="Center"
-                                   Text="{Binding Title}" FontSize="16" />
-                            <Grid.GestureRecognizers>
-                                <TapGestureRecognizer
-                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ExamDetailViewModel}}, Path=CycleStatusCommand}"
-                                    CommandParameter="{Binding .}" />
-                            </Grid.GestureRecognizers>
-                        </Grid>
+                        <Border Style="{StaticResource Card}" Padding="12" Margin="0,0,0,8">
+                            <Grid ColumnDefinitions="Auto,*">
+                                <Label Grid.Column="0" FontSize="18" Text="{Binding Status, Converter={StaticResource StatusToIcon}}" />
+                                <Label Grid.Column="1" Margin="10,0,0,0" VerticalOptions="Center"
+                                       Text="{Binding Title}" FontSize="16" />
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ExamDetailViewModel}}, Path=CycleStatusCommand}"
+                                        CommandParameter="{Binding .}" />
+                                </Grid.GestureRecognizers>
+                            </Grid>
+                        </Border>
                     </SwipeView>
                 </DataTemplate>
             </CollectionView.ItemTemplate>

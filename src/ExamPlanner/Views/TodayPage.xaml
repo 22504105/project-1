@@ -10,20 +10,22 @@
     <Grid RowDefinitions="Auto,Auto,*" Padding="16" RowSpacing="10">
         <Label Grid.Row="0" Text="{Binding HeaderText}" FontSize="16" FontAttributes="Bold" />
         <Label Grid.Row="1" Text="Не всё вмещается в доступное время — часть тем перенесена."
-               TextColor="OrangeRed" IsVisible="{Binding HasWarning}" />
+               Style="{StaticResource WarningLabel}" IsVisible="{Binding HasWarning}" />
         <CollectionView Grid.Row="2" ItemsSource="{Binding Items}">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="svc:PlanItem">
-                    <Grid Padding="10" ColumnDefinitions="*,Auto">
-                        <VerticalStackLayout Grid.Column="0">
-                            <Label Text="{Binding TopicTitle}" FontSize="16" />
-                            <Label FontSize="12" TextColor="Gray"
-                                   Text="{Binding ExamName, StringFormat='{0} · '}" />
-                        </VerticalStackLayout>
-                        <Button Grid.Column="1" Text="Готово"
-                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:TodayViewModel}}, Path=MarkDoneCommand}"
-                                CommandParameter="{Binding .}" />
-                    </Grid>
+                    <Border Style="{StaticResource Card}" Padding="12" Margin="0,0,0,8">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <VerticalStackLayout Grid.Column="0" VerticalOptions="Center">
+                                <Label Text="{Binding TopicTitle}" FontSize="16" />
+                                <Label Style="{StaticResource SecondaryLabel}" FontSize="12"
+                                       Text="{Binding ExamName, StringFormat='{0} · '}" />
+                            </VerticalStackLayout>
+                            <Button Grid.Column="1" Text="Готово"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:TodayViewModel}}, Path=MarkDoneCommand}"
+                                    CommandParameter="{Binding .}" />
+                        </Grid>
+                    </Border>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
