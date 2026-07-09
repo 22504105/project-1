@@ -1,0 +1,12 @@
+# Normalize line endings: store text as LF in the repo, check out native.
+* text=auto
+
+# Keep these CRLF on checkout (Windows/VS tooling)
+*.sln  text eol=crlf
+*.slnx text eol=crlf
+
+# Binary assets — never normalize
+*.ttf  binary
+*.png  binary
+*.jpg  binary
+*.ico  binary

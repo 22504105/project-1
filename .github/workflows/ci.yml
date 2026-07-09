@@ -1,0 +1,22 @@
+name: Core CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      # Core + its tests are net8.0 (no MAUI/Android), so they build and test on Linux.
+      - name: Test ExamPlanner.Core
+        run: dotnet test tests/ExamPlanner.Core.Tests -c Release
