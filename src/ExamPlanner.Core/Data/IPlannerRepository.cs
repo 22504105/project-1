@@ -14,4 +14,7 @@ public interface IPlannerRepository
     Task DeleteTopicAsync(int id);
     Task<AppSettings> GetSettingsAsync();
     Task SaveSettingsAsync(AppSettings settings);
+    Task<int> SaveSessionAsync(StudySession session);
+    Task<List<StudySession>> GetSessionsAsync(int examId);
+    Task<List<StudySession>> GetAllSessionsAsync();
 }
