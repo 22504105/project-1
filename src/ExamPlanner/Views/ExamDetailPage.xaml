@@ -5,11 +5,14 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:vm="clr-namespace:ExamPlanner.ViewModels"
     xmlns:models="clr-namespace:ExamPlanner.Core.Models;assembly=ExamPlanner.Core"
+    xmlns:controls="clr-namespace:ExamPlanner.Controls"
     x:DataType="vm:ExamDetailViewModel"
     Title="{Binding Title}">
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="✎" Command="{Binding EditExamCommand}" />
     </ContentPage.ToolbarItems>
+    <Grid>
+    <controls:SquaresBackgroundView />
     <Grid RowDefinitions="Auto,Auto,*" Padding="16" RowSpacing="10">
         <Label Grid.Row="0" Text="{Binding PaceText}" FontSize="15" FontAttributes="Bold" />
 
@@ -59,5 +62,6 @@
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
+    </Grid>
     </Grid>
 </ContentPage>

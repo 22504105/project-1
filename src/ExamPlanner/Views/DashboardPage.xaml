@@ -5,11 +5,14 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:vm="clr-namespace:ExamPlanner.ViewModels"
     xmlns:svc="clr-namespace:ExamPlanner.Core.Services;assembly=ExamPlanner.Core"
+    xmlns:controls="clr-namespace:ExamPlanner.Controls"
     x:DataType="vm:DashboardViewModel"
     Title="Экзамены">
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="＋" Command="{Binding AddExamCommand}" />
     </ContentPage.ToolbarItems>
+    <Grid>
+    <controls:SquaresBackgroundView />
     <Grid RowDefinitions="Auto,*" Padding="16" RowSpacing="12">
         <VerticalStackLayout Grid.Row="0" Spacing="4">
             <Label Text="{Binding SummaryText}" FontSize="16" />
@@ -40,5 +43,6 @@
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
+    </Grid>
     </Grid>
 </ContentPage>

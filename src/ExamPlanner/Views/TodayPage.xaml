@@ -5,8 +5,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:vm="clr-namespace:ExamPlanner.ViewModels"
     xmlns:svc="clr-namespace:ExamPlanner.Core.Services;assembly=ExamPlanner.Core"
+    xmlns:controls="clr-namespace:ExamPlanner.Controls"
     x:DataType="vm:TodayViewModel"
     Title="Сегодня">
+    <Grid>
+    <controls:SquaresBackgroundView />
     <Grid RowDefinitions="Auto,Auto,*" Padding="16" RowSpacing="10">
         <Label Grid.Row="0" Text="{Binding HeaderText}" FontSize="16" FontAttributes="Bold" />
         <Label Grid.Row="1" Text="Не всё вмещается в доступное время — часть тем перенесена."
@@ -30,5 +33,6 @@
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
+    </Grid>
     </Grid>
 </ContentPage>
