@@ -14,7 +14,7 @@ namespace ExamPlanner.Controls;
 public sealed class StudyTreeView : GraphicsView
 {
 	public const double AppleStep = 0.15;   // one apple per +15% beyond the goal
-	public const int MaxApples = 7;
+	public const int MaxApples = 9;
 
 	public static readonly BindableProperty FractionProperty = BindableProperty.Create(
 		nameof(Fraction), typeof(double), typeof(StudyTreeView), 0d,
@@ -81,6 +81,7 @@ public sealed class StudyTreeView : GraphicsView
 	{
 		public double Target { get; set; }
 		private double _shown;
+		private readonly float _seed = Random.Shared.NextSingle() * 6.2832f; // fresh apple layout each time the view is created
 
 		/// <returns>true while still easing toward the target.</returns>
 		public bool Advance()
@@ -198,15 +199,15 @@ public sealed class StudyTreeView : GraphicsView
 
 			if (apples > 0 && g >= 0.999f)
 			{
-				float ar = Math.Max(5f, canopyR * 0.14f);
+				float ar = Math.Max(4.5f, canopyR * 0.12f);
 				for (int i = 0; i < apples; i++)
 				{
-					// even coverage across the whole canopy (Vogel/golden-angle spiral)
-					// plus deterministic jitter so it still looks chaotic.
+					// Vogel/golden-angle spiral keeps even spacing (no clumping); a random
+					// per-view rotation (_seed) + small jitter make each layout different.
 					float t = (i + 0.5f) / apples;
-					float rr = MathF.Sqrt(t) + (Frac(MathF.Sin(i * 91.7f + 2.1f) * 47251.3f) - 0.5f) * 0.22f;
-					rr = Math.Clamp(rr, 0.05f, 0.92f);
-					float ang = i * 2.399963f + (Frac(MathF.Sin(i * 53.3f + 5.7f) * 19733.7f) - 0.5f) * 1.1f;
+					float baseR = MathF.Sqrt(t) * 0.86f;
+					float rr = Math.Clamp(baseR + (Frac(MathF.Sin((i + _seed) * 91.7f + 2.1f) * 47251.3f) - 0.5f) * 0.09f, 0.06f, 0.88f);
+					float ang = i * 2.399963f + _seed + (Frac(MathF.Sin((i + _seed) * 53.3f + 5.7f) * 19733.7f) - 0.5f) * 0.5f;
 					float ax = cx + MathF.Cos(ang) * rr * canopyR * 1.05f;
 					float ay = cy - canopyR * 0.05f + MathF.Sin(ang) * rr * canopyR * 0.85f;
 					DrawApple(canvas, ax, ay, ar, appleColor, appleHi, trunkColor, leafColor);
