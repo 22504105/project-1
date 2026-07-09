@@ -69,7 +69,45 @@ public class PlannerService
             .Select(d => new DayHours(d, HoursForWeekday(settings, d) > 0 ? perStudyDayHours : 0))
             .ToList();
 
-        return new WeeklyScheduleProposal(days, requiredMinsPerDay / 60, studyDayCount > 0);
+        return new WeeklyScheduleProposal(days, requiredMinsPerDay / 60, IsScheduleFeasible(data, days, today));
+    }
+
+    // Deadline-aware feasibility: simulate day-by-day with the proposed per-weekday hours,
+    // allocating each day's minutes to the earliest-dated exam still open (EDF). An exam is
+    // covered only if its weighted remaining minutes reach 0 before its date (no study on exam day).
+    private bool IsScheduleFeasible(
+        IReadOnlyList<(Exam exam, IReadOnlyList<Topic> topics)> data,
+        IReadOnlyList<DayHours> days,
+        DateTime today)
+    {
+        var hoursByWeekday = days.ToDictionary(d => d.Day, d => d.Hours);
+
+        var pending = data
+            .Select(d => (
+                Date: d.exam.Date.Date,
+                Remaining: (double)d.topics.Where(t => t.Status != TopicStatus.Done).Sum(t => EffectiveMinutes(t, d.exam))))
+            .Where(x => x.Remaining > 0)
+            .OrderBy(x => x.Date)
+            .ToArray();
+
+        if (pending.Length == 0) return true;
+
+        var lastDate = pending.Max(p => p.Date);
+        for (var day = today.Date; day < lastDate; day = day.AddDays(1))
+        {
+            var dayMins = hoursByWeekday.TryGetValue(day.DayOfWeek, out var h) ? h * 60 : 0;
+            if (dayMins <= 0) continue;
+
+            for (var i = 0; i < pending.Length && dayMins > 0; i++)
+            {
+                if (pending[i].Remaining <= 0 || pending[i].Date <= day) continue; // done, or exam day/past
+                var take = Math.Min(dayMins, pending[i].Remaining);
+                pending[i].Remaining -= take;
+                dayMins -= take;
+            }
+        }
+
+        return pending.All(p => p.Remaining <= 0);
     }
 
     public ExamPace BuildPace(Exam exam, IReadOnlyList<Topic> topics, DateTime today)

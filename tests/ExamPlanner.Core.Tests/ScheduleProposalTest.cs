@@ -88,4 +88,44 @@ public class ScheduleProposalTest
         Assert.Equal(4, _svc.HoursForWeekday(s, DayOfWeek.Wednesday));
         Assert.Equal(2, _svc.HoursForWeekday(s, DayOfWeek.Monday)); // fallback
     }
+
+    [Fact]
+    public void Feasible_Is_False_When_Deadline_Falls_Before_Study_Days()
+    {
+        // today = 2026-06-01 (Monday). Exam 2026-06-04 (Thu), remaining 3*60=180 min.
+        // User studies only weekends -> Mon/Tue/Wed before the exam give 0 minutes -> cannot cover in time.
+        var exam = new Exam { Id = 1, Name = "M", Date = new DateTime(2026, 6, 4), MinutesPerTopic = 60 };
+        var topics = Enumerable.Range(0, 3)
+            .Select(i => new Topic { Id = i + 1, Position = i, Difficulty = TopicDifficulty.Medium })
+            .ToList();
+        var data = new List<(Exam, IReadOnlyList<Topic>)> { (exam, topics) };
+        var settings = new AppSettings
+        {
+            AvailableHoursPerDay = 0,
+            MonHours = 0, TueHours = 0, WedHours = 0, ThuHours = 0, FriHours = 0,
+            SatHours = 2, SunHours = 2
+        };
+
+        var proposal = _svc.ProposeWeeklySchedule(data, settings, new DateTime(2026, 6, 1));
+
+        Assert.False(proposal.Feasible);
+    }
+
+    [Fact]
+    public void Feasible_MultiExam_EDF_Covers_Earlier_Deadline_First()
+    {
+        // today Mon 2026-06-01. Exam A due 06-03 (120 min), Exam B due 06-08 (120 min), all 7 days studied.
+        // EDF gives A priority so it finishes before 06-03; both covered -> feasible.
+        var examA = new Exam { Id = 1, Name = "A", Date = new DateTime(2026, 6, 3), MinutesPerTopic = 60 };
+        var examB = new Exam { Id = 2, Name = "B", Date = new DateTime(2026, 6, 8), MinutesPerTopic = 60 };
+        List<Topic> Two(int examId) => Enumerable.Range(0, 2)
+            .Select(i => new Topic { Id = examId * 10 + i, ExamId = examId, Position = i, Difficulty = TopicDifficulty.Medium })
+            .ToList();
+        var data = new List<(Exam, IReadOnlyList<Topic>)> { (examA, Two(1)), (examB, Two(2)) };
+        var settings = new AppSettings { AvailableHoursPerDay = 2 };
+
+        var proposal = _svc.ProposeWeeklySchedule(data, settings, new DateTime(2026, 6, 1));
+
+        Assert.True(proposal.Feasible);
+    }
 }
