@@ -65,7 +65,7 @@ public sealed class SquaresBackgroundView : GraphicsView
 		{
 			var rnd = new Random(7);
 			var list = new List<Square>();
-			for (int i = 0; i < 12; i++)
+			for (int i = 0; i < 18; i++)
 			{
 				list.Add(new Square(
 					x: (float)rnd.NextDouble(),
