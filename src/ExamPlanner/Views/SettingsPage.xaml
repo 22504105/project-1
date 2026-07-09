@@ -40,6 +40,43 @@
             </VerticalStackLayout>
         </Border>
 
+        <Border Style="{StaticResource Card}">
+            <VerticalStackLayout Spacing="10">
+                <Label Text="График по дням недели" FontSize="16" FontAttributes="Bold" />
+                <Label Style="{StaticResource SecondaryLabel}"
+                       Text="Часы на каждый день. Пусто = использовать базовое значение." />
+
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12" RowSpacing="6"
+                      RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+                    <Label Grid.Row="0" Grid.Column="0" Text="Пн" VerticalOptions="Center" WidthRequest="36" />
+                    <Entry Grid.Row="0" Grid.Column="1" Text="{Binding MonText}" Keyboard="Numeric" Placeholder="базовое" />
+                    <Label Grid.Row="1" Grid.Column="0" Text="Вт" VerticalOptions="Center" WidthRequest="36" />
+                    <Entry Grid.Row="1" Grid.Column="1" Text="{Binding TueText}" Keyboard="Numeric" Placeholder="базовое" />
+                    <Label Grid.Row="2" Grid.Column="0" Text="Ср" VerticalOptions="Center" WidthRequest="36" />
+                    <Entry Grid.Row="2" Grid.Column="1" Text="{Binding WedText}" Keyboard="Numeric" Placeholder="базовое" />
+                    <Label Grid.Row="3" Grid.Column="0" Text="Чт" VerticalOptions="Center" WidthRequest="36" />
+                    <Entry Grid.Row="3" Grid.Column="1" Text="{Binding ThuText}" Keyboard="Numeric" Placeholder="базовое" />
+                    <Label Grid.Row="4" Grid.Column="0" Text="Пт" VerticalOptions="Center" WidthRequest="36" />
+                    <Entry Grid.Row="4" Grid.Column="1" Text="{Binding FriText}" Keyboard="Numeric" Placeholder="базовое" />
+                    <Label Grid.Row="5" Grid.Column="0" Text="Сб" VerticalOptions="Center" WidthRequest="36" />
+                    <Entry Grid.Row="5" Grid.Column="1" Text="{Binding SatText}" Keyboard="Numeric" Placeholder="базовое" />
+                    <Label Grid.Row="6" Grid.Column="0" Text="Вс" VerticalOptions="Center" WidthRequest="36" />
+                    <Entry Grid.Row="6" Grid.Column="1" Text="{Binding SunText}" Keyboard="Numeric" Placeholder="базовое" />
+                </Grid>
+
+                <Button Text="Предложить график" Command="{Binding ProposeCommand}"
+                        Style="{StaticResource TonalButton}" HorizontalOptions="Start" />
+
+                <VerticalStackLayout Spacing="6" IsVisible="{Binding HasProposal}">
+                    <Label Text="{Binding RequiredText}" FontAttributes="Bold" />
+                    <Label Text="{Binding ProposalText}" Style="{StaticResource SecondaryLabel}" />
+                    <Label Text="Нет ни одного учебного дня — задай часы хотя бы на один день."
+                           Style="{StaticResource WarningLabel}" IsVisible="{Binding NotFeasible}" />
+                    <Button Text="Применить" Command="{Binding ApplyProposalCommand}" HorizontalOptions="Start" />
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </Border>
+
     </VerticalStackLayout>
     </ScrollView>
     </Grid>

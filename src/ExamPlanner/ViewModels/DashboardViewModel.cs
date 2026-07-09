@@ -34,7 +34,8 @@ public partial class DashboardViewModel : ObservableObject
 			data.Add((exam, await _repo.GetTopicsAsync(exam.Id)));
 
 		var settings = await _repo.GetSettingsAsync();
-		var summary = _planner.BuildDashboard(data, settings.AvailableHoursPerDay, DateTime.Now);
+		var todayHours = _planner.HoursForDay(settings, DateTime.Now);
+		var summary = _planner.BuildDashboard(data, todayHours, DateTime.Now);
 
 		Exams.Clear();
 		foreach (var pace in summary.Exams)
