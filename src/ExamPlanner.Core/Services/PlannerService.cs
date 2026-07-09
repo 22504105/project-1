@@ -12,6 +12,19 @@ public class PlannerService
     public int TodayQuota(int remaining, int daysLeft)
         => remaining <= 0 ? 0 : (int)Math.Ceiling((double)remaining / daysLeft);
 
+    public int EffectiveMinutes(Topic topic, Exam exam)
+        => (int)Math.Round(
+            exam.MinutesPerTopic * Multiplier(topic.Difficulty),
+            MidpointRounding.AwayFromZero);
+
+    private static double Multiplier(TopicDifficulty difficulty)
+        => difficulty switch
+        {
+            TopicDifficulty.Easy => 0.5,
+            TopicDifficulty.Hard => 1.5,
+            _ => 1.0
+        };
+
     public ExamPace BuildPace(Exam exam, IReadOnlyList<Topic> topics, DateTime today)
     {
         var total = topics.Count;
