@@ -62,4 +62,15 @@ public class RepositoryTest : IDisposable
         Assert.Single(topics);
         Assert.Equal(TopicDifficulty.Hard, topics[0].Difficulty);
     }
+
+    [Fact]
+    public async Task SaveSettings_RoundTrips_WeekdayHours()
+    {
+        await _repo.SaveSettingsAsync(new AppSettings { AvailableHoursPerDay = 2, SatHours = 5, SunHours = 6 });
+
+        var loaded = await _repo.GetSettingsAsync();
+        Assert.Equal(5, loaded.SatHours);
+        Assert.Equal(6, loaded.SunHours);
+        Assert.Null(loaded.MonHours);
+    }
 }

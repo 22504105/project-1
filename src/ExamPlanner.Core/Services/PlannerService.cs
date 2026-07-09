@@ -25,6 +25,18 @@ public class PlannerService
             _ => 1.0
         };
 
+    public double HoursForDay(AppSettings settings, DateTime day)
+        => (day.DayOfWeek switch
+        {
+            DayOfWeek.Monday => settings.MonHours,
+            DayOfWeek.Tuesday => settings.TueHours,
+            DayOfWeek.Wednesday => settings.WedHours,
+            DayOfWeek.Thursday => settings.ThuHours,
+            DayOfWeek.Friday => settings.FriHours,
+            DayOfWeek.Saturday => settings.SatHours,
+            _ => settings.SunHours
+        }) ?? settings.AvailableHoursPerDay;
+
     public ExamPace BuildPace(Exam exam, IReadOnlyList<Topic> topics, DateTime today)
     {
         var total = topics.Count;
