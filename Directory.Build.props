@@ -1,0 +1,24 @@
+<Project>
+
+  <!--
+    NuGet audit suppression for CVE-2025-6965 / GHSA-2m69-gcr7-jv3q.
+
+    The vulnerability is in the SQLite native library (< 3.50.2) bundled by
+    SQLitePCLRaw.lib.e_sqlite3.* (pulled transitively via sqlite-net-pcl /
+    SQLitePCLRaw.bundle_green). As of now there is NO patched SQLitePCLRaw
+    release: the advisory flags all versions up to and including 2.1.11 (the
+    latest), so a version bump cannot clear it.
+
+    Risk assessment: ExamPlanner is a local, single-user app that only runs
+    its own parameterized queries against its own database. The CVE requires
+    attacker-controlled SQL where aggregate terms exceed available columns —
+    a code path this app never exposes. Not reachable here.
+
+    Action: revisit and remove this suppression once SQLitePCLRaw ships a
+    build bundling SQLite >= 3.50.2, then upgrade.
+  -->
+  <ItemGroup>
+    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-2m69-gcr7-jv3q" />
+  </ItemGroup>
+
+</Project>

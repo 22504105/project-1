@@ -22,6 +22,10 @@ UpgradeLog*.htm
 # Superpowers SDD scratch (ledger, briefs, review packages)
 .superpowers/
 
+# JVM crash dumps (e.g. from Android D8/dexing failures)
+hs_err_pid*.log
+replay_pid*.log
+
 # OS
 Thumbs.db
 .DS_Store
