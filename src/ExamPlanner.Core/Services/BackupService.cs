@@ -35,6 +35,8 @@ public class BackupService
     {
         var snapshot = JsonSerializer.Deserialize<BackupSnapshot>(json)
             ?? throw new ArgumentException("Invalid backup JSON", nameof(json));
+        if (snapshot.Exams is null || snapshot.Topics is null || snapshot.Sessions is null || snapshot.Settings is null)
+            throw new ArgumentException("Incomplete backup JSON", nameof(json));
 
         // Clear existing (DeleteExamAsync cascades its topics + sessions).
         foreach (var exam in await _repo.GetExamsAsync())

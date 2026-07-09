@@ -76,4 +76,13 @@ public class BackupTest : IDisposable
         Assert.Single(exams);
         Assert.Equal("Kept", exams[0].Name);
     }
+
+    [Theory]
+    [InlineData("null")]     // deserializes to null snapshot
+    [InlineData("{}")]       // deserializes to a snapshot with null lists
+    public async Task Import_Throws_On_Malformed_Json(string json)
+    {
+        var repo = NewRepo();
+        await Assert.ThrowsAsync<ArgumentException>(() => new BackupService(repo).ImportJsonAsync(json));
+    }
 }
