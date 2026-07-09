@@ -11,6 +11,8 @@
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <converters:StatusToIconConverter x:Key="StatusToIcon" />
+            <converters:DifficultyToTextConverter x:Key="DifficultyToText" />
+            <converters:InvertBoolConverter x:Key="InvertBool" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

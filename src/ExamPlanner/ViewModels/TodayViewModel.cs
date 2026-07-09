@@ -31,7 +31,8 @@ public partial class TodayViewModel : ObservableObject
 			data.Add((exam, await _repo.GetTopicsAsync(exam.Id)));
 
 		var settings = await _repo.GetSettingsAsync();
-		var plan = _planner.BuildDailyPlan(data, settings.AvailableHoursPerDay, DateTime.Now);
+		var todayHours = _planner.HoursForDay(settings, DateTime.Now);
+		var plan = _planner.BuildDailyPlan(data, todayHours, DateTime.Now);
 
 		Items.Clear();
 		foreach (var item in plan.Items) Items.Add(item);

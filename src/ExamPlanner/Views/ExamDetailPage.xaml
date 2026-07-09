@@ -9,6 +9,7 @@
     x:DataType="vm:ExamDetailViewModel"
     Title="{Binding Title}">
     <ContentPage.ToolbarItems>
+        <ToolbarItem Text="⏱" Command="{Binding StartTimerCommand}" />
         <ToolbarItem Text="✎" Command="{Binding EditExamCommand}" />
     </ContentPage.ToolbarItems>
     <Grid>
@@ -16,10 +17,22 @@
     <Grid RowDefinitions="Auto,Auto,*" Padding="16" RowSpacing="10">
         <Label Grid.Row="0" Text="{Binding PaceText}" FontSize="15" FontAttributes="Bold" />
 
-        <Grid Grid.Row="1" ColumnDefinitions="*,Auto" ColumnSpacing="10">
-            <Entry Grid.Column="0" Text="{Binding NewTopicTitle}" Placeholder="Новая тема" VerticalOptions="Center" />
-            <Button Grid.Column="1" Text="Добавить" Command="{Binding AddTopicCommand}" Style="{StaticResource TonalButton}" />
-        </Grid>
+        <VerticalStackLayout Grid.Row="1" Spacing="8">
+            <Entry Text="{Binding NewTopicTitle}" Placeholder="Новая тема" />
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                <Picker Grid.Column="0" Title="Сложность" SelectedIndex="{Binding NewTopicDifficultyIndex}"
+                        VerticalOptions="Center">
+                    <Picker.ItemsSource>
+                        <x:Array Type="{x:Type x:String}">
+                            <x:String>Средний</x:String>
+                            <x:String>Лёгкий</x:String>
+                            <x:String>Тяжёлый</x:String>
+                        </x:Array>
+                    </Picker.ItemsSource>
+                </Picker>
+                <Button Grid.Column="1" Text="Добавить" Command="{Binding AddTopicCommand}" Style="{StaticResource TonalButton}" />
+            </Grid>
+        </VerticalStackLayout>
 
         <CollectionView Grid.Row="2" ItemsSource="{Binding Topics}">
             <CollectionView.ItemTemplate>
@@ -34,28 +47,53 @@
                             </SwipeItems>
                         </SwipeView.RightItems>
                         <Border Style="{StaticResource Card}" Padding="16" Margin="0,0,0,10">
-                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14">
-                                <Label Grid.Column="0" FontSize="18" VerticalOptions="Center"
-                                       Text="{Binding Status, Converter={StaticResource StatusToIcon}}">
-                                    <Label.Triggers>
-                                        <DataTrigger TargetType="Label" Binding="{Binding Status}" Value="Done">
-                                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource AccentGreenLight}, Dark={StaticResource AccentGreenDark}}" />
-                                        </DataTrigger>
-                                        <DataTrigger TargetType="Label" Binding="{Binding Status}" Value="InProgress">
-                                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource WarningLight}, Dark={StaticResource WarningDark}}" />
-                                        </DataTrigger>
-                                        <DataTrigger TargetType="Label" Binding="{Binding Status}" Value="NotStarted">
-                                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource SecondaryTextLight}, Dark={StaticResource SecondaryTextDark}}" />
-                                        </DataTrigger>
-                                    </Label.Triggers>
-                                </Label>
-                                <Label Grid.Column="1" VerticalOptions="Center"
-                                       Text="{Binding Title}" FontSize="16" />
-                                <Grid.GestureRecognizers>
-                                    <TapGestureRecognizer
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ExamDetailViewModel}}, Path=CycleStatusCommand}"
-                                        CommandParameter="{Binding .}" />
-                                </Grid.GestureRecognizers>
+                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                                <Grid Grid.Column="0" ColumnDefinitions="Auto,*" ColumnSpacing="14">
+                                    <Label Grid.Column="0" FontSize="18" VerticalOptions="Center"
+                                           Text="{Binding Status, Converter={StaticResource StatusToIcon}}">
+                                        <Label.Triggers>
+                                            <DataTrigger TargetType="Label" Binding="{Binding Status}" Value="Done">
+                                                <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource AccentGreenLight}, Dark={StaticResource AccentGreenDark}}" />
+                                            </DataTrigger>
+                                            <DataTrigger TargetType="Label" Binding="{Binding Status}" Value="InProgress">
+                                                <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource WarningLight}, Dark={StaticResource WarningDark}}" />
+                                            </DataTrigger>
+                                            <DataTrigger TargetType="Label" Binding="{Binding Status}" Value="NotStarted">
+                                                <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource SecondaryTextLight}, Dark={StaticResource SecondaryTextDark}}" />
+                                            </DataTrigger>
+                                        </Label.Triggers>
+                                    </Label>
+                                    <Label Grid.Column="1" VerticalOptions="Center"
+                                           Text="{Binding Title}" FontSize="16" />
+                                    <Grid.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ExamDetailViewModel}}, Path=CycleStatusCommand}"
+                                            CommandParameter="{Binding .}" />
+                                    </Grid.GestureRecognizers>
+                                </Grid>
+                                <Border Grid.Column="1" Padding="10,4" VerticalOptions="Center"
+                                        BackgroundColor="{AppThemeBinding Light={StaticResource AccentTintLight}, Dark={StaticResource AccentTintDark}}"
+                                        Stroke="Transparent" StrokeShape="RoundRectangle 10">
+                                    <Label FontSize="12" VerticalOptions="Center"
+                                           Text="{Binding Difficulty, Converter={StaticResource DifficultyToText}}">
+                                        <Label.Triggers>
+                                            <DataTrigger TargetType="Label" Binding="{Binding Difficulty}" Value="Easy">
+                                                <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource AccentGreenLight}, Dark={StaticResource AccentGreenDark}}" />
+                                            </DataTrigger>
+                                            <DataTrigger TargetType="Label" Binding="{Binding Difficulty}" Value="Medium">
+                                                <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource OnTintLight}, Dark={StaticResource OnTintDark}}" />
+                                            </DataTrigger>
+                                            <DataTrigger TargetType="Label" Binding="{Binding Difficulty}" Value="Hard">
+                                                <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource DangerLight}, Dark={StaticResource DangerDark}}" />
+                                            </DataTrigger>
+                                        </Label.Triggers>
+                                    </Label>
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ExamDetailViewModel}}, Path=CycleDifficultyCommand}"
+                                            CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
+                                </Border>
                             </Grid>
                         </Border>
                     </SwipeView>

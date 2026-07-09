@@ -22,6 +22,7 @@ public static class MauiProgram
 		var dbPath = Path.Combine(FileSystem.AppDataDirectory, "examplanner.db3");
 		builder.Services.AddSingleton<IPlannerRepository>(_ => new SqlitePlannerRepository(dbPath));
 		builder.Services.AddSingleton<PlannerService>();
+		builder.Services.AddSingleton<StatsService>();
 
 		builder.Services.AddTransient<DashboardPage>();
 		builder.Services.AddTransient<DashboardViewModel>();
@@ -37,6 +38,12 @@ public static class MauiProgram
 
 		builder.Services.AddTransient<SettingsPage>();
 		builder.Services.AddTransient<SettingsViewModel>();
+
+		builder.Services.AddTransient<TimerPage>();
+		builder.Services.AddTransient<TimerViewModel>();
+
+		builder.Services.AddTransient<StatsPage>();
+		builder.Services.AddTransient<StatsViewModel>();
 
 #if DEBUG
 		builder.Logging.AddDebug();

@@ -18,6 +18,10 @@ public partial class ExamDetailViewModel : ObservableObject
 	[ObservableProperty] private string _paceText = string.Empty;
 	[ObservableProperty] private string _newTopicTitle = string.Empty;
 
+	// New-topic difficulty picker: 0 = Средний (Medium), 1 = Лёгкий (Easy), 2 = Тяжёлый (Hard).
+	// Index maps 1:1 onto the TopicDifficulty enum values.
+	[ObservableProperty] private int _newTopicDifficultyIndex;
+
 	public ObservableCollection<Topic> Topics { get; } = new();
 
 	public ExamDetailViewModel(IPlannerRepository repo, PlannerService planner)
@@ -53,9 +57,24 @@ public partial class ExamDetailViewModel : ObservableObject
 			ExamId = ExamId,
 			Title = NewTopicTitle.Trim(),
 			Status = TopicStatus.NotStarted,
-			Position = Topics.Count
+			Position = Topics.Count,
+			Difficulty = (TopicDifficulty)NewTopicDifficultyIndex
 		});
 		NewTopicTitle = string.Empty;
+		NewTopicDifficultyIndex = 0;
+		await LoadAsync();
+	}
+
+	[RelayCommand]
+	private async Task CycleDifficulty(Topic topic)
+	{
+		topic.Difficulty = topic.Difficulty switch
+		{
+			TopicDifficulty.Easy => TopicDifficulty.Medium,
+			TopicDifficulty.Medium => TopicDifficulty.Hard,
+			_ => TopicDifficulty.Easy
+		};
+		await _repo.SaveTopicAsync(topic);
 		await LoadAsync();
 	}
 
@@ -82,4 +101,8 @@ public partial class ExamDetailViewModel : ObservableObject
 	[RelayCommand]
 	private async Task EditExam()
 		=> await Shell.Current.GoToAsync($"editexam?examId={ExamId}");
+
+	[RelayCommand]
+	private async Task StartTimer()
+		=> await Shell.Current.GoToAsync($"timer?examId={ExamId}");
 }

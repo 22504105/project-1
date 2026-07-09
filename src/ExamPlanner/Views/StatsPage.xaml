@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="ExamPlanner.Views.StatsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:ExamPlanner.ViewModels"
+    xmlns:controls="clr-namespace:ExamPlanner.Controls"
+    x:DataType="vm:StatsViewModel"
+    Title="Статистика">
+    <Grid>
+    <controls:SquaresBackgroundView />
+    <ScrollView>
+    <VerticalStackLayout Padding="16" Spacing="16">
+
+        <Border Style="{StaticResource Card}">
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                <VerticalStackLayout Grid.Column="0" Spacing="2">
+                    <Label Text="Всего" Style="{StaticResource SecondaryLabel}" />
+                    <Label Text="{Binding TotalText}" FontFamily="InterSemibold" FontSize="24" />
+                </VerticalStackLayout>
+                <VerticalStackLayout Grid.Column="1" Spacing="2">
+                    <Label Text="Сегодня" Style="{StaticResource SecondaryLabel}" />
+                    <Label Text="{Binding TodayText}" FontFamily="InterSemibold" FontSize="24" />
+                </VerticalStackLayout>
+            </Grid>
+        </Border>
+
+        <Label Text="Пока нет учебных сессий. Запусти таймер на экране экзамена."
+               Style="{StaticResource SecondaryLabel}" IsVisible="{Binding IsEmpty}" />
+
+        <Border Style="{StaticResource Card}" IsVisible="{Binding IsEmpty, Converter={StaticResource InvertBool}}">
+            <VerticalStackLayout Spacing="10">
+                <Label Text="По экзаменам" FontSize="16" FontAttributes="Bold" />
+                <VerticalStackLayout BindableLayout.ItemsSource="{Binding PerExam}" Spacing="8">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="vm:ExamStat">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Grid.Column="0" Text="{Binding Name}" />
+                                <Label Grid.Column="1" Text="{Binding MinutesText}"
+                                       Style="{StaticResource SecondaryLabel}" />
+                            </Grid>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </Border>
+
+        <Border Style="{StaticResource Card}" IsVisible="{Binding IsEmpty, Converter={StaticResource InvertBool}}">
+            <VerticalStackLayout Spacing="10">
+                <Label Text="Последние 14 дней" FontSize="16" FontAttributes="Bold" />
+                <VerticalStackLayout BindableLayout.ItemsSource="{Binding PerDay}" Spacing="6">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="vm:DayStat">
+                            <Grid ColumnDefinitions="52,*,Auto" ColumnSpacing="8">
+                                <Label Grid.Column="0" Text="{Binding DayLabel}"
+                                       Style="{StaticResource SecondaryLabel}" VerticalOptions="Center" />
+                                <Border Grid.Column="1" HorizontalOptions="Start" VerticalOptions="Center"
+                                        IsVisible="{Binding HasValue}"
+                                        WidthRequest="{Binding BarWidth}" HeightRequest="14"
+                                        Stroke="Transparent" StrokeShape="RoundRectangle 7"
+                                        BackgroundColor="{AppThemeBinding Light={StaticResource AccentGreenLight}, Dark={StaticResource AccentGreenDark}}" />
+                                <Label Grid.Column="2" Text="{Binding MinutesText}"
+                                       Style="{StaticResource SecondaryLabel}" VerticalOptions="Center" />
+                            </Grid>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </Border>
+
+    </VerticalStackLayout>
+    </ScrollView>
+    </Grid>
+</ContentPage>

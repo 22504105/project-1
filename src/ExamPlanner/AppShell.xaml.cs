@@ -7,5 +7,6 @@ public partial class AppShell : Shell
 		InitializeComponent();
 		Routing.RegisterRoute("editexam", typeof(Views.EditExamPage));
 		Routing.RegisterRoute("exam", typeof(Views.ExamDetailPage));
+		Routing.RegisterRoute("timer", typeof(Views.TimerPage));
 	}
 }
