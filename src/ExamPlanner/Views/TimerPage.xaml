@@ -10,13 +10,13 @@
     <Grid>
     <controls:SquaresBackgroundView />
     <ScrollView>
-    <VerticalStackLayout Padding="20" Spacing="18">
+    <VerticalStackLayout Padding="16" Spacing="10">
 
-        <Label Text="{Binding ElapsedText}" FontFamily="InterSemibold" FontSize="72"
+        <Label Text="{Binding ElapsedText}" FontFamily="InterSemibold" FontSize="54"
                HorizontalOptions="Center" />
 
         <controls:StudyTreeView Fraction="{Binding TreeFraction}"
-                                HeightRequest="230" HorizontalOptions="Fill" />
+                                HeightRequest="140" HorizontalOptions="Fill" />
 
         <Label Text="{Binding ProgressText}" Style="{StaticResource SecondaryLabel}"
                HorizontalOptions="Center" />
