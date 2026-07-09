@@ -51,4 +51,15 @@ public class RepositoryTest : IDisposable
         Assert.Equal(1, settings.Id);
         Assert.Equal(2, settings.AvailableHoursPerDay);
     }
+
+    [Fact]
+    public async Task SaveTopic_RoundTrips_Difficulty()
+    {
+        var examId = await _repo.SaveExamAsync(new Exam { Name = "Matan" });
+        await _repo.SaveTopicAsync(new Topic { ExamId = examId, Title = "Series", Difficulty = TopicDifficulty.Hard });
+
+        var topics = await _repo.GetTopicsAsync(examId);
+        Assert.Single(topics);
+        Assert.Equal(TopicDifficulty.Hard, topics[0].Difficulty);
+    }
 }
