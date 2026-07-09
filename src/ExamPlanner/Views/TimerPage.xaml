@@ -9,10 +9,21 @@
     Title="{Binding Title}">
     <Grid>
     <controls:SquaresBackgroundView />
-    <VerticalStackLayout Padding="20" Spacing="20" VerticalOptions="Center">
+    <ScrollView>
+    <VerticalStackLayout Padding="20" Spacing="18">
 
         <Label Text="{Binding ElapsedText}" FontFamily="InterSemibold" FontSize="72"
                HorizontalOptions="Center" />
+
+        <controls:StudyTreeView Fraction="{Binding TreeFraction}"
+                                HeightRequest="230" HorizontalOptions="Fill" />
+
+        <Label Text="{Binding ProgressText}" Style="{StaticResource SecondaryLabel}"
+               HorizontalOptions="Center" />
+
+        <Label Text="{Binding GoalText}" Style="{StaticResource SuccessLabel}"
+               FontFamily="InterSemibold" HorizontalOptions="Center"
+               IsVisible="{Binding GoalVisible}" />
 
         <Border Style="{StaticResource Card}">
             <VerticalStackLayout Spacing="10">
@@ -36,5 +47,6 @@
         <Label Text="{Binding StatusText}" Style="{StaticResource SuccessLabel}"
                HorizontalOptions="Center" />
     </VerticalStackLayout>
+    </ScrollView>
     </Grid>
 </ContentPage>
