@@ -173,4 +173,32 @@ public class PlannerService
 
         return new DailyPlan(items, used, available, notFitted);
     }
+
+    // Calibration: how the user's logged time compares to the estimate for what they've completed.
+    // factor = actual minutes logged for the exam / expected minutes for its Done topics.
+    // No data (no Done topics or no sessions) -> 1.0 (no calibration). Clamped to avoid outlier skew.
+    public double CalibrationFactor(Exam exam, IReadOnlyList<Topic> topics, IReadOnlyList<StudySession> sessions)
+    {
+        var expectedDone = topics
+            .Where(t => t.Status == TopicStatus.Done)
+            .Sum(t => EffectiveMinutes(t, exam));
+        if (expectedDone <= 0) return 1.0;
+
+        var actualDone = sessions.Sum(s => s.Minutes);
+        if (actualDone <= 0) return 1.0;
+
+        return Math.Clamp((double)actualDone / expectedDone, 0.25, 4.0);
+    }
+
+    // Remaining-time projection per day, scaled by the calibration factor.
+    public double CalibratedNeedMinutesPerDay(
+        Exam exam, IReadOnlyList<Topic> topics, IReadOnlyList<StudySession> sessions, DateTime today)
+    {
+        var remaining = topics.Where(t => t.Status != TopicStatus.Done).ToList();
+        if (remaining.Count == 0) return 0;
+
+        var daysLeft = DaysLeft(exam.Date, today);
+        var baseMins = remaining.Sum(t => EffectiveMinutes(t, exam));
+        return CalibrationFactor(exam, topics, sessions) * baseMins / daysLeft;
+    }
 }
